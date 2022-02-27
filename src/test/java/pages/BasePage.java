@@ -2,7 +2,9 @@ package pages;
 
 import org.codehaus.plexus.util.FileUtils;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
@@ -44,5 +46,19 @@ public class BasePage {
     public void takeScreenshot(String fileName) throws IOException {
         File file = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
         FileUtils.copyFile(file, new File("src/screenshot/"+fileName+"_"+System.currentTimeMillis()+".png"));
+    }
+    public void click2(WebElement element){
+        WebDriverWait wait = new WebDriverWait(driver,20);
+        wait.until(ExpectedConditions.visibilityOf(element));
+        wait.until(ExpectedConditions.elementToBeClickable(element));
+        try {
+            Actions actions = new Actions(driver);
+            actions.moveToElement(element).build().perform();
+            element.click();
+        }catch (StaleElementReferenceException e){
+            Actions actions = new Actions(driver);
+            actions.moveToElement(element).build().perform();
+            element.click();
+        }
     }
 }
